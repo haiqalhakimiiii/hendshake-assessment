@@ -29,6 +29,10 @@ body {
     @apply border border-black rounded-md ml-auto;
 }
 
-.todo-item {
-    @apply flex gap-2;
+.todo-container {
+    @apply border rounded-md border-gray-500 p-3 relative;
+}
+
+.delete {
+    @apply text-red-500 cursor-pointer absolute top-0 right-2;
 }

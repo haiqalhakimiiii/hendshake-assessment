@@ -21,22 +21,18 @@ type ToDo = {
 };
 
 export default function Home() {
-	const {
-		register,
-		handleSubmit,
-		watch,
-		formState: { errors },
-	} = useForm<ToDo>();
+	const { register, handleSubmit, reset } = useForm<ToDo>();
 
 	const [todos, setTodo] = useState<ToDo[]>([]);
 
 	const onSubmit = (data: ToDo) => {
 		setTodo([...todos, data]);
+		reset();
 	};
 
 	const deleteTodo = (index: number) => {
-		setTodo(todos.filter((_, i) => i !== index))
-	}
+		setTodo(todos.filter((_, i) => i !== index));
+	};
 
 	return (
 		<div
@@ -113,12 +109,24 @@ export default function Home() {
 
 				<div>
 					<h1 className="text-2xl">Todo List ({todos.length})</h1>
+					<div className="flex gap-2 flex-wrap">
+
 					{todos.map((todo, index) => (
-						<div key={index} className="todo-item">
-							<li>{todo.activity}</li>
-							<button className="text-sm text-red-500 cursor-pointer" onClick={() => deleteTodo(index)}>delete</button>
+						<div key={index} className="todo-container">
+							<div>Activity: {todo.activity}</div>
+							<div>Price: {todo.price}</div>
+							<div>Type : {todo.type}</div>
+							<div>Booking Required: {todo.booking ? 'Yes' : 'No'}</div>
+							<div>Accessibility: {todo.accessibility}</div>
+							<button
+								className="delete"
+								onClick={() => deleteTodo(index)}
+							>
+								x
+							</button>
 						</div>
 					))}
+					</div>
 				</div>
 			</main>
 		</div>
