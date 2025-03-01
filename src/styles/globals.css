@@ -28,3 +28,7 @@ body {
 .input-field {
     @apply border border-black rounded-md ml-auto;
 }
+
+.todo-item {
+    @apply flex gap-2;
+}

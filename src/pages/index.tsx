@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -11,7 +12,7 @@ const geistMono = Geist_Mono({
 	subsets: ["latin"],
 });
 
-type Inputs = {
+type ToDo = {
 	activity: string;
 	price: number;
 	type: string;
@@ -25,19 +26,28 @@ export default function Home() {
 		handleSubmit,
 		watch,
 		formState: { errors },
-	} = useForm<Inputs>();
+	} = useForm<ToDo>();
 
-	const onSubmit: SubmitHandler<Inputs> = (data) => {
-		console.log(data);
+	const [todos, setTodo] = useState<ToDo[]>([]);
+
+	const onSubmit = (data: ToDo) => {
+		setTodo([...todos, data]);
 	};
+
+	const deleteTodo = (index: number) => {
+		setTodo(todos.filter((_, i) => i !== index))
+	}
 
 	return (
 		<div
 			className={`${geistSans.variable} ${geistMono.variable} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
 		>
-			<main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+			<main className="flex gap-8 row-start-2 items-center sm:items-start">
 				<div className="form">
-					<form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+					<form
+						onSubmit={handleSubmit(onSubmit)}
+						className="flex flex-col gap-2"
+					>
 						<div className="input-group">
 							<p>Activity</p>
 							<div className="input-field">
@@ -55,12 +65,16 @@ export default function Home() {
 							<div className="input-field">
 								<select {...register("type")}>
 									<option value="Education">Education</option>
-									<option value="Recretional">Recretional</option>
+									<option value="Recretional">
+										Recretional
+									</option>
 									<option value="Social">Social</option>
 									<option value="DIY">DIY</option>
 									<option value="Charity">Charity</option>
 									<option value="Cooking">Cooking</option>
-									<option value="Relaxation">Relaxation</option>
+									<option value="Relaxation">
+										Relaxation
+									</option>
 									<option value="Music">Music</option>
 									<option value="Busywork">Busywork</option>
 								</select>
@@ -69,18 +83,42 @@ export default function Home() {
 						<div className="input-group">
 							<p>Booking required</p>
 							<div className="ml-auto">
-								<input type="checkbox" {...register("booking")} />
+								<input
+									type="checkbox"
+									{...register("booking")}
+								/>
 							</div>
 						</div>
 						<div className="input-group">
 							<p>Accessibility</p>
 							<div className="ml-auto">
-								<input type="range" min={0.0} max={1.0} step={0.1} {...register("accessibility")} />
+								<input
+									type="range"
+									min={0.0}
+									max={1.0}
+									step={0.1}
+									{...register("accessibility")}
+								/>
 							</div>
 						</div>
 
-						<button type="submit" className="border border-black bg-black text-white cursor-pointer">Submit</button>
+						<button
+							type="submit"
+							className="border border-black bg-black text-white cursor-pointer"
+						>
+							Submit
+						</button>
 					</form>
+				</div>
+
+				<div>
+					<h1 className="text-2xl">Todo List ({todos.length})</h1>
+					{todos.map((todo, index) => (
+						<div key={index} className="todo-item">
+							<li>{todo.activity}</li>
+							<button className="text-sm text-red-500 cursor-pointer" onClick={() => deleteTodo(index)}>delete</button>
+						</div>
+					))}
 				</div>
 			</main>
 		</div>
