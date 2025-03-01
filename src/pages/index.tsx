@@ -1,5 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 const geistSans = Geist({
@@ -20,6 +20,8 @@ type ToDo = {
 	accessibility: number;
 };
 
+const TODOLIST_KEY = "todoList";
+
 export default function Home() {
 	const { register, handleSubmit, reset } = useForm<ToDo>();
 
@@ -33,6 +35,25 @@ export default function Home() {
 	const deleteTodo = (index: number) => {
 		setTodo(todos.filter((_, i) => i !== index));
 	};
+
+	function fetchTodos(): ToDo[] {
+		if (typeof window !== "undefined") {
+			const todos = localStorage.getItem(TODOLIST_KEY);
+			return todos ? JSON.parse(todos) : [];
+		}
+		
+		return [];
+	}
+
+	useEffect(() => {
+		setTodo(fetchTodos);
+	}, [])
+
+	useEffect(() => {
+		if (typeof window !== "undefined") {
+			localStorage.setItem(TODOLIST_KEY, JSON.stringify(todos));
+		}
+	}, [todos]);
 
 	return (
 		<div
@@ -110,22 +131,24 @@ export default function Home() {
 				<div>
 					<h1 className="text-2xl">Todo List ({todos.length})</h1>
 					<div className="flex gap-2 flex-wrap">
-
-					{todos.map((todo, index) => (
-						<div key={index} className="todo-container">
-							<div>Activity: {todo.activity}</div>
-							<div>Price: {todo.price}</div>
-							<div>Type : {todo.type}</div>
-							<div>Booking Required: {todo.booking ? 'Yes' : 'No'}</div>
-							<div>Accessibility: {todo.accessibility}</div>
-							<button
-								className="delete"
-								onClick={() => deleteTodo(index)}
-							>
-								x
-							</button>
-						</div>
-					))}
+						{todos.map((todo, index) => (
+							<div key={index} className="todo-container">
+								<div>Activity: {todo.activity}</div>
+								<div>Price: {todo.price}</div>
+								<div>Type : {todo.type}</div>
+								<div>
+									Booking Required:{" "}
+									{todo.booking ? "Yes" : "No"}
+								</div>
+								<div>Accessibility: {todo.accessibility}</div>
+								<button
+									className="delete"
+									onClick={() => deleteTodo(index)}
+								>
+									x
+								</button>
+							</div>
+						))}
 					</div>
 				</div>
 			</main>
