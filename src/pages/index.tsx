@@ -1,23 +1,88 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+	variable: "--font-geist-sans",
+	subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+	variable: "--font-geist-mono",
+	subsets: ["latin"],
 });
 
+type Inputs = {
+	activity: string;
+	price: number;
+	type: string;
+	booking: boolean;
+	accessibility: number;
+};
+
 export default function Home() {
-  return (
-    <div
-      className={`${geistSans.variable} ${geistMono.variable} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        
-      </main>
-    </div>
-  );
+	const {
+		register,
+		handleSubmit,
+		watch,
+		formState: { errors },
+	} = useForm<Inputs>();
+
+	const onSubmit: SubmitHandler<Inputs> = (data) => {
+		console.log(data);
+	};
+
+	return (
+		<div
+			className={`${geistSans.variable} ${geistMono.variable} grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
+		>
+			<main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+				<div className="form">
+					<form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+						<div className="input-group">
+							<p>Activity</p>
+							<div className="input-field">
+								<input type="text" {...register("activity")} />
+							</div>
+						</div>
+						<div className="input-group">
+							<p>Price</p>
+							<div className="input-field">
+								<input type="number" {...register("price")} />
+							</div>
+						</div>
+						<div className="input-group">
+							<p>Type</p>
+							<div className="input-field">
+								<select {...register("type")}>
+									<option value="Education">Education</option>
+									<option value="Recretional">Recretional</option>
+									<option value="Social">Social</option>
+									<option value="DIY">DIY</option>
+									<option value="Charity">Charity</option>
+									<option value="Cooking">Cooking</option>
+									<option value="Relaxation">Relaxation</option>
+									<option value="Music">Music</option>
+									<option value="Busywork">Busywork</option>
+								</select>
+							</div>
+						</div>
+						<div className="input-group">
+							<p>Booking required</p>
+							<div className="ml-auto">
+								<input type="checkbox" {...register("booking")} />
+							</div>
+						</div>
+						<div className="input-group">
+							<p>Accessibility</p>
+							<div className="ml-auto">
+								<input type="range" min={0.0} max={1.0} step={0.1} {...register("accessibility")} />
+							</div>
+						</div>
+
+						<button type="submit" className="border border-black bg-black text-white cursor-pointer">Submit</button>
+					</form>
+				</div>
+			</main>
+		</div>
+	);
 }
